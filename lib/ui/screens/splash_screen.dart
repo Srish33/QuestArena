@@ -35,19 +35,29 @@ class SplashScreen extends ConsumerWidget {
 
             // App Name
             Text(
-              'QUESTARENA',
-              style: AppTextStyles.display.copyWith(letterSpacing: 4),
+              'QUEST ARENA',
+              textAlign: TextAlign.center,
+              style:
+              AppTextStyles.display.copyWith(
+                fontSize:28,
+                  letterSpacing:0
+              ),
             )
                 .animate()
                 .slideY(begin: 1, end: 0, duration: 600.ms, curve: Curves.easeOut)
                 .fadeIn(),
 
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
 
             // Subtitle
             Text(
               'BATTLE OF WITS',
-              style: AppTextStyles.label.copyWith(color: AppColors.gold),
+              textAlign: TextAlign.center,
+              style: AppTextStyles.label.copyWith(
+                fontSize:14,
+                  color: AppColors.gold
+              ),
+
             ).animate().fadeIn(delay: 800.ms),
           ],
         ),
