@@ -22,7 +22,7 @@ class UserRepository {
           DatabaseError("Username already taken."),
         );
       }
-
+git
       await _service.setData(
         path: 'users/${user.uid}',
         data: user.toJson(),
