@@ -11,7 +11,7 @@ class GameRoomModel {
   final Map<String, dynamic>? player2;
   final List<dynamic> questions;
   final int currentQuestionIndex;
-  final DateTime? questionDeadline;
+  final DateTime? questionStartedAt;
   final String? winnerId;
   final List<String> claimedRewards;
   final List<String> rematchRequests;
@@ -29,7 +29,6 @@ class GameRoomModel {
   // Disconnect & Forfeit Fields
   final Map<String, dynamic> presence;
   final String? forfeitWinnerId;
-  final DateTime? questionStartTime; // Source of truth for 15s timer
 
   GameRoomModel({
     required this.roomId,
@@ -39,7 +38,7 @@ class GameRoomModel {
     this.player2,
     required this.questions,
     this.currentQuestionIndex = 0,
-    this.questionDeadline,
+    this.questionStartedAt,
     this.winnerId,
     this.claimedRewards = const [],
     this.rematchRequests = const [],
@@ -53,7 +52,6 @@ class GameRoomModel {
     this.arenaBreakerStatusMessage,
     this.presence = const {},
     this.forfeitWinnerId,
-    this.questionStartTime,
   });
 
   factory GameRoomModel.fromJson(Map<String, dynamic> json) {
@@ -65,8 +63,8 @@ class GameRoomModel {
       player2: json['player2'] != null ? Map<String, dynamic>.from(json['player2']) : null,
       questions: List<dynamic>.from(json['questions'] ?? []),
       currentQuestionIndex: json['currentQuestionIndex'] ?? 0,
-      questionDeadline: json['questionDeadline'] != null 
-          ? DateTime.tryParse(json['questionDeadline'].toString()) 
+      questionStartedAt: json['questionStartedAt'] != null 
+          ? (json['questionStartedAt'] as Timestamp).toDate() 
           : null,
       winnerId: json['winnerId'],
       claimedRewards: List<String>.from(json['claimedRewards'] ?? []),
@@ -81,9 +79,6 @@ class GameRoomModel {
       arenaBreakerStatusMessage: json['arenaBreakerStatusMessage'],
       presence: Map<String, dynamic>.from(json['presence'] ?? {}),
       forfeitWinnerId: json['forfeitWinnerId'],
-      questionStartTime: json['questionStartTime'] != null 
-          ? (json['questionStartTime'] as Timestamp).toDate() 
-          : null,
     );
   }
 
@@ -95,7 +90,7 @@ class GameRoomModel {
     'player2': player2,
     'questions': questions,
     'currentQuestionIndex': currentQuestionIndex,
-    'questionDeadline': questionDeadline?.toIso8601String(),
+    'questionStartedAt': questionStartedAt != null ? Timestamp.fromDate(questionStartedAt!) : null,
     'winnerId': winnerId,
     'claimedRewards': claimedRewards,
     'rematchRequests': rematchRequests,
@@ -109,6 +104,5 @@ class GameRoomModel {
     'arenaBreakerStatusMessage': arenaBreakerStatusMessage,
     'presence': presence,
     'forfeitWinnerId': forfeitWinnerId,
-    'questionStartTime': questionStartTime != null ? Timestamp.fromDate(questionStartTime!) : null,
   };
 }
