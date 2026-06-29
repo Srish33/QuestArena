@@ -14,6 +14,13 @@ class UserModel {
   final String? avatarUrl;
   final int level;
   final int xp;
+  final int xpToNextLevel;
+  final int coins;
+  final int totalWins;
+  final int totalLosses;
+  final int totalDraws;
+  final int currentStreak;
+  final double averageAccuracy;
   final String rank;
   final int? subRank;
   final int rankPoints;
@@ -40,6 +47,12 @@ class UserModel {
     this.subRank,
     this.rankPoints = 0,
     this.coins = 0,
+    this.totalWins = 0,
+    this.totalLosses = 0,
+    this.totalDraws = 0,
+    this.currentStreak = 0,
+    this.averageAccuracy = 0.0,
+    this.rank = 'Bronze',
     this.wins = 0,
     this.losses = 0,
     this.draws = 0,
@@ -72,6 +85,12 @@ class UserModel {
       subRank: subRank,
       rankPoints: json['rankPoints'] ?? 0,
       coins: json['coins'] ?? 0,
+      totalWins: json['totalWins'] ?? 0,
+      totalLosses: json['totalLosses'] ?? 0,
+      totalDraws: json['totalDraws'] ?? 0,
+      currentStreak: json['currentStreak'] ?? 0,
+      averageAccuracy: (json['averageAccuracy'] ?? 0).toDouble(),
+      rank: json['rank'] ?? 'Bronze',
       wins: json['wins'] ?? json['totalWins'] ?? 0,
       losses: json['losses'] ?? json['totalLosses'] ?? 0,
       draws: json['draws'] ?? 0,
@@ -94,6 +113,13 @@ class UserModel {
         'avatarUrl': avatarUrl,
         'level': level,
         'xp': xp,
+        'xpToNextLevel': xpToNextLevel,
+        'coins': coins,
+        'totalWins': totalWins,
+        'totalLosses': totalLosses,
+        'totalDraws': totalDraws,
+        'currentStreak': currentStreak,
+        'averageAccuracy': averageAccuracy,
         'rank': rank,
         'subRank': subRank,
         'rankPoints': rankPoints,
@@ -118,6 +144,11 @@ class UserModel {
     int? xp,
     int? level,
     String? rank,
+    int? totalWins,
+    int? totalLosses,
+    int? totalDraws,
+    int? currentStreak,
+    double? averageAccuracy,
     int? arenaBreakerWins,
     int? arenaBreakerLosses,
     int? subRank,
@@ -142,8 +173,11 @@ class UserModel {
       level: level ?? this.level,
       rank: rank ?? this.rank,
       level: level,
-      totalWins: totalWins,
-      totalLosses: totalLosses,
+      totalWins: totalWins ?? this.totalWins,
+      totalLosses: totalLosses ?? this.totalLosses,
+      totalDraws: totalDraws ?? this.totalDraws,
+      currentStreak: currentStreak ?? this.currentStreak,
+      averageAccuracy: averageAccuracy ?? this.averageAccuracy,
       achievements: achievements,
       arenaBreakerWins: arenaBreakerWins ?? this.arenaBreakerWins,
       arenaBreakerLosses: arenaBreakerLosses ?? this.arenaBreakerLosses,

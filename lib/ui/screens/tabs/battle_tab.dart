@@ -10,6 +10,7 @@ import '../../../data/models/matchmaking_model.dart';
 import '../../../providers/matchmaking_providers.dart';
 import '../matchmaking_screen.dart';
 import '../private_room_screen.dart';
+import '../practice_screen.dart';
 import '../../widgets/category_picker_sheet.dart';
 import '../../../features/practice/screens/practice_setup_screen.dart';
 
@@ -93,6 +94,7 @@ class _BattleTabState extends ConsumerState<BattleTab> {
                 icon: Icons.psychology_rounded,
                 color: AppColors.teal,
                 onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const PracticeScreen()));
                   Navigator.push(context, MaterialPageRoute(builder: (_) => const PracticeSetupScreen()));
                 },
               ),
@@ -134,7 +136,7 @@ class _BattleModeCard extends StatelessWidget {
           children: [
             Container(
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(color: color.withOpacity(0.1), shape: BoxShape.circle),
+              decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
               child: Icon(icon, color: color, size: 32),
             ),
             const SizedBox(width: 20),

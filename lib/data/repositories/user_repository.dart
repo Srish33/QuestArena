@@ -91,6 +91,7 @@ class UserRepository {
   Future<MatchEndResult?> processMatchEnd({
     required String uid,
     required bool isWin,
+    bool isDraw = false,
     bool isArenaBreakerWin = false,
   }) async {
     final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
@@ -112,14 +113,20 @@ class UserRepository {
       int currentCoins = data['coins'] ?? 0;
       int wins = data['totalWins'] ?? 0;
       int losses = data['totalLosses'] ?? 0;
+      int draws = data['totalDraws'] ?? 0;
       int abWins = data['arenaBreakerWins'] ?? 0;
       int abLosses = data['arenaBreakerLosses'] ?? 0;
 
       // Update XP and Coins
       currentXp += xpGained;
       currentCoins += coinsGained;
+      
       if (isWin) {
         wins++;
+      } else if (isDraw) {
+        draws++;
+      } else if (xpGained > 0) { 
+        // Only increment losses if it's not a win and not a draw
         if (isArenaBreakerWin) abWins++;
       } else {
         losses++;
@@ -188,6 +195,7 @@ class UserRepository {
         'coins': currentCoins,
         'totalWins': wins,
         'totalLosses': losses,
+        'totalDraws': draws,
         'arenaBreakerWins': abWins,
         'arenaBreakerLosses': abLosses,
         'rank': rank,
@@ -234,29 +242,36 @@ class UserRepository {
     );
   }
 
-  Future<void> saveMatchHistory(String uid, MatchHistoryModel history) async {
+  Future<void> saveMatchHistory(String uid, MatchModel history) async {
     await FirebaseFirestore.instance
         .collection('users')
         .doc(uid)
         .collection('matchHistory')
-        .doc(history.matchId)
+        .doc(history.id)
         .set(history.toJson());
   }
 
-  Stream<List<MatchHistoryModel>> watchMatchHistory(String uid) {
+  Future<void> deleteMatchHistory(String uid, String matchId) async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .collection('matchHistory')
+        .doc(matchId)
+        .delete();
+  }
+
+  Stream<List<MatchModel>> watchMatchHistory(String uid) {
     return FirebaseFirestore.instance
         .collection('users')
         .doc(uid)
         .collection('matchHistory')
-        // Temporarily removed orderBy to check if it's an index issue
-        .limit(10)
+        .limit(20)
         .snapshots()
         .map((snapshot) {
       final history = snapshot.docs
-          .map((doc) => MatchHistoryModel.fromJson(doc.data()))
+          .map((doc) => MatchModel.fromJson(doc.data()))
           .toList();
-      // Sort manually in Dart to avoid index requirements during debug
-      history.sort((a, b) => b.playedAt.compareTo(a.playedAt));
+      history.sort((a, b) => b.timestamp.compareTo(a.timestamp));
       return history;
     });
   }
