@@ -2,7 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/constants/colors.dart';
-import '../../core/theme/app_theme.dart';
+import '../../core/constants/text_styles.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -20,8 +20,8 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 4),
-    )..forward();
+      duration: const Duration(seconds: 5),
+    )..repeat();
   }
 
   @override
@@ -36,65 +36,111 @@ class _SplashScreenState extends State<SplashScreen>
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // Dark Galaxy with rushing neon colors
+          // Warp Speed Starfield
           AnimatedBuilder(
             animation: _controller,
             builder: (context, _) {
               return CustomPaint(
-                painter: _GalaxyPainter(progress: _controller.value),
+                painter: _WarpPainter(progress: _controller.value),
                 size: Size.infinite,
               );
             },
           ),
           
-          // Quest Arena Tag
+          // Cinematic Overlay Glows
+          Container(
+            decoration: BoxDecoration(
+              gradient: RadialGradient(
+                colors: [
+                  Colors.transparent,
+                  Colors.black.withValues(alpha: 0.8),
+                ],
+                radius: 1.2,
+              ),
+            ),
+          ),
+
+          // Central Branding
           Center(
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
+                // Animated Shield Logo
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Outer Glow
+                    Container(
+                      width: 140,
+                      height: 140,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.neonCyan.withValues(alpha: 0.2),
+                            blurRadius: 40,
+                            spreadRadius: 10,
+                          ),
+                        ],
+                      ),
+                    ).animate(onPlay: (c) => c.repeat()).shimmer(duration: 2.seconds),
+                    
+                    const Icon(
+                      Icons.shield_rounded,
+                      size: 100,
+                      color: AppColors.gold,
+                    )
+                        .animate()
+                        .fade(duration: 800.ms)
+                        .scale(delay: 200.ms, curve: Curves.elasticOut)
+                        .shimmer(delay: 1.seconds, duration: 1.5.seconds),
+                  ],
+                ),
+
+                const SizedBox(height: 32),
+
+                // App Name with Cyberpunk Glitch effect
+                Text(
                   'QUEST ARENA',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 48,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 8,
-                    fontFamily: 'Orbitron', // Using a sophisticated font if available, else default bold
+                  style: AppTextStyles.display.copyWith(
+                    letterSpacing: 12,
+                    fontSize: 36,
+                    shadows: [
+                      const Shadow(color: AppColors.neonCyan, blurRadius: 10, offset: Offset(-2, 0)),
+                      const Shadow(color: AppColors.neonPink, blurRadius: 10, offset: Offset(2, 0)),
+                    ],
                   ),
                 )
-
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Logo Icon
-            const Icon(
-              Icons.shield_rounded,
-              size: 100,
-              color: AppColors.gold,
-            )
-                .animate()
-                .fade(duration: 800.ms)
-                .scale(delay: 200.ms, curve: Curves.elasticOut),
-
-            const SizedBox(height: 24),
-
-            // App Name
-            Text(
-              'QUESTARENA',
-              style: AppTextStyles.display.copyWith(letterSpacing: 4),
-            )
-                .animate()
-                .fadeIn(duration: 1500.ms, curve: Curves.easeIn)
-                .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.0, 1.0), duration: 2000.ms),
+                    .animate()
+                    .fadeIn(duration: 1.seconds)
+                    .slideY(begin: 0.2, end: 0, curve: Curves.easeOutCubic)
+                    .then()
+                    .shimmer(duration: 2.seconds),
+                    
+                const SizedBox(height: 16),
                 
-                const SizedBox(height: 10),
-                
+                // Loading Line
                 Container(
                   height: 2,
-                  width: 100,
-                  color: AppColors.neonCyan.withValues(alpha: 0.5),
-                ).animate().scaleX(begin: 0, end: 1, duration: 1000.ms, delay: 1000.ms),
+                  width: 180,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(2),
+                    gradient: const LinearGradient(
+                      colors: [AppColors.neonCyan, AppColors.neonViolet, AppColors.neonPink],
+                    ),
+                  ),
+                ).animate().scaleX(begin: 0, end: 1, duration: 2.seconds, curve: Curves.easeInOutExpo),
+                
+                const SizedBox(height: 12),
+                
+                Text(
+                  'PREPARING FOR BATTLE...',
+                  style: AppTextStyles.label.copyWith(
+                    color: AppColors.textSecondary,
+                    letterSpacing: 4,
+                    fontSize: 10,
+                  ),
+                ).animate(onPlay: (c) => c.repeat()).fadeIn(duration: 1.seconds).fadeOut(delay: 800.ms, duration: 1.seconds),
               ],
             ),
           ),
@@ -104,74 +150,52 @@ class _SplashScreenState extends State<SplashScreen>
   }
 }
 
-class _GalaxyPainter extends CustomPainter {
+class _WarpPainter extends CustomPainter {
   final double progress;
-  _GalaxyPainter({required this.progress});
+  _WarpPainter({required this.progress});
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    final random = math.Random(42);
+    final random = math.Random(12345);
     
-    // Star field
-    final starPaint = Paint()..color = Colors.white;
-    for (int i = 0; i < 100; i++) {
-      starPaint.color = Colors.white.withValues(alpha: random.nextDouble() * 0.5);
-      final offset = Offset(random.nextDouble() * size.width, random.nextDouble() * size.height);
-      canvas.drawCircle(offset, random.nextDouble() * 1.5, starPaint);
-    }
+    // We draw stars as lines stretching from center
+    for (int i = 0; i < 150; i++) {
+      final angle = random.nextDouble() * 2 * math.pi;
+      final startDist = random.nextDouble() * 1.5; // normalized 0 to 1.5
+      
+      // Calculate current position based on progress
+      double currentDist = (startDist + progress) % 1.5;
+      
+      // Warp speed curve: things accelerate as they move away from center
+      double speedFactor = math.pow(currentDist, 2.5).toDouble();
+      
+      final opacity = (currentDist * 0.8).clamp(0.0, 1.0);
+      final color = i % 10 == 0 
+          ? AppColors.neonCyan.withValues(alpha: opacity)
+          : i % 15 == 0 
+              ? AppColors.neonViolet.withValues(alpha: opacity)
+              : Colors.white.withValues(alpha: opacity);
 
-    // Neon rushing particles
-    final neonColors = [
-      AppColors.neonCyan,
-      AppColors.neonViolet,
-      AppColors.neonPink,
-      AppColors.neonAmber,
-    ];
-
-    for (int i = 0; i < 40; i++) {
-      final color = neonColors[i % neonColors.length];
       final paint = Paint()
-        ..color = color.withValues(alpha: (1.0 - progress).clamp(0.0, 0.6))
-        ..strokeWidth = 2.0
+        ..color = color
+        ..strokeWidth = 1.0 + (speedFactor * 2)
         ..strokeCap = StrokeCap.round;
 
-      // Particles starting from outside and rushing inward
-      final angle = random.nextDouble() * 2 * math.pi;
-      final startRadius = math.max(size.width, size.height) * 0.8;
-      final currentRadius = startRadius * (1.0 - progress);
-      
       final startPos = Offset(
-        center.dx + math.cos(angle) * startRadius,
-        center.dy + math.sin(angle) * startRadius,
+        center.dx + math.cos(angle) * (speedFactor * size.width * 0.5),
+        center.dy + math.sin(angle) * (speedFactor * size.width * 0.5),
       );
       
-      final currentPos = Offset(
-        center.dx + math.cos(angle) * currentRadius,
-        center.dy + math.sin(angle) * currentRadius,
+      final endPos = Offset(
+        center.dx + math.cos(angle) * ((speedFactor + 0.05) * size.width * 0.5),
+        center.dy + math.sin(angle) * ((speedFactor + 0.05) * size.width * 0.5),
       );
 
-      // Draw a line representing the rush
-      canvas.drawLine(
-        Offset(
-          center.dx + math.cos(angle) * (currentRadius + 50),
-          center.dy + math.sin(angle) * (currentRadius + 50),
-        ),
-        currentPos,
-        paint,
-      );
-      
-      // Add a glow
-      canvas.drawCircle(
-        currentPos,
-        4.0,
-        Paint()
-          ..color = color.withValues(alpha: 0.2)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
-      );
+      canvas.drawLine(startPos, endPos, paint);
     }
   }
 
   @override
-  bool shouldRepaint(_GalaxyPainter oldDelegate) => true;
+  bool shouldRepaint(_WarpPainter oldDelegate) => true;
 }

@@ -175,7 +175,7 @@ class _CharacterSelectScreenState extends State<CharacterSelectScreen>
                           isFemale: true,
                         ),
                         const SizedBox(height: 16),
-                        _SectionLabel(
+                        const _SectionLabel(
                             label: 'MALE WARRIORS', color: AppColors.neonCyan),
                         const SizedBox(height: 8),
                         // Male group
@@ -291,23 +291,23 @@ class _CharacterCardState extends State<_CharacterCard>
           curve: Curves.easeOutCubic,
           decoration: BoxDecoration(
             color: widget.isSelected
-                ? c.accentColor.withOpacity(0.08)
+                ? c.accentColor.withValues(alpha: 0.08)
                 : AppColors.bgCard,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: widget.isSelected
-                  ? c.accentColor.withOpacity(0.7)
+                  ? c.accentColor.withValues(alpha: 0.7)
                   : const Color(0xFF1E1E30),
               width: widget.isSelected ? 1.5 : 0.5,
             ),
             boxShadow: widget.isSelected
                 ? [
               BoxShadow(
-                  color: c.accentColor.withOpacity(0.25),
+                  color: c.accentColor.withValues(alpha: 0.25),
                   blurRadius: 16,
                   spreadRadius: 2),
               BoxShadow(
-                  color: c.accentColor.withOpacity(0.08),
+                  color: c.accentColor.withValues(alpha: 0.08),
                   blurRadius: 32),
             ]
                 : null,
@@ -362,10 +362,10 @@ class _SelectedCharacterBanner extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: character.accentColor.withOpacity(0.06),
+        color: character.accentColor.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-            color: character.accentColor.withOpacity(0.3), width: 0.5),
+            color: character.accentColor.withValues(alpha: 0.3), width: 0.5),
       ),
       child: Row(
         children: [
@@ -398,10 +398,10 @@ class _SelectedCharacterBanner extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
-              color: character.accentColor.withOpacity(0.15),
+              color: character.accentColor.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                  color: character.accentColor.withOpacity(0.4), width: 0.5),
+                  color: character.accentColor.withValues(alpha: 0.4), width: 0.5),
             ),
             child: Text(
               'SELECTED',
@@ -437,7 +437,7 @@ class _SectionLabel extends StatelessWidget {
             color: color,
             borderRadius: BorderRadius.circular(2),
             boxShadow: [
-              BoxShadow(color: color.withOpacity(0.5), blurRadius: 6)
+              BoxShadow(color: color.withValues(alpha: 0.5), blurRadius: 6)
             ],
           ),
         ),
@@ -492,12 +492,12 @@ class _NeonButtonState extends State<_NeonButton>
           width: double.infinity,
           height: 54,
           decoration: BoxDecoration(
-            color: widget.color.withOpacity(0.12),
+            color: widget.color.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: widget.color.withOpacity(0.8), width: 1),
+            border: Border.all(color: widget.color.withValues(alpha: 0.8), width: 1),
             boxShadow: [
-              BoxShadow(color: widget.color.withOpacity(0.3), blurRadius: 16, spreadRadius: 1),
-              BoxShadow(color: widget.color.withOpacity(0.1), blurRadius: 32),
+              BoxShadow(color: widget.color.withValues(alpha: 0.3), blurRadius: 16, spreadRadius: 1),
+              BoxShadow(color: widget.color.withValues(alpha: 0.1), blurRadius: 32),
             ],
           ),
           alignment: Alignment.center,

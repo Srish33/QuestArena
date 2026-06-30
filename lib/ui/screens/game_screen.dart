@@ -12,6 +12,8 @@ import '../../providers/game_providers.dart';
 import '../../providers/user_providers.dart';
 import '../../data/models/game_room_model.dart';
 import '../../core/utils/game_utils.dart';
+import '../widgets/smart_avatar.dart';
+import '../widgets/neon_swirl_background.dart';
 import 'result_screen.dart';
 
 class GameScreen extends ConsumerStatefulWidget {
@@ -261,11 +263,16 @@ class _GameScreenState extends ConsumerState<GameScreen>
           error: (e, s) => Center(child: Text('Error: $e')),
           data: (room) {
             if (room == null) return const Center(child: Text('Room Error'));
-            return Stack(
-              children: [
-                _buildMainUI(room),
-                if (_isOpponentDisconnected) _buildDisconnectBanner(),
-              ],
+            return NeonSwirlBackground(
+              colors: room.status == 'arena_breaker' 
+                  ? const [AppColors.red, AppColors.neonViolet]
+                  : const [AppColors.neonCyan, AppColors.neonViolet],
+              child: Stack(
+                children: [
+                  _buildMainUI(room),
+                  if (_isOpponentDisconnected) _buildDisconnectBanner(),
+                ],
+              ),
             );
           },
         ),
@@ -315,12 +322,37 @@ class _GameScreenState extends ConsumerState<GameScreen>
   }
 
   Widget _buildHeader(GameRoomModel room) {
+    final user = ref.read(currentUserProvider).value;
+    final isP1 = user?.uid == room.player1['uid'];
+    
+    final myData = isP1 ? room.player1 : room.player2;
+    final opData = isP1 ? room.player2 : room.player1;
+
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _PlayerStat(name: room.player1['username'], score: room.player1['score'], isLeft: true),
-        Text('${room.currentQuestionIndex + 1}/10', style: AppTextStyles.label),
-        _PlayerStat(name: room.player2?['username'] ?? '...', score: room.player2?['score'] ?? 0, isLeft: false),
+        _PlayerStat(
+          name: myData?['username'] ?? 'Me', 
+          avatarUrl: myData?['avatarUrl'],
+          score: myData?['score'] ?? 0, 
+          isLeft: true
+        ),
+        const Spacer(),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: AppColors.bgDeep,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AppColors.surface),
+          ),
+          child: Text('${room.currentQuestionIndex + 1}/10', style: AppTextStyles.label.copyWith(color: AppColors.gold)),
+        ),
+        const Spacer(),
+        _PlayerStat(
+          name: opData?['username'] ?? '...', 
+          avatarUrl: opData?['avatarUrl'],
+          score: opData?['score'] ?? 0, 
+          isLeft: false
+        ),
       ],
     );
   }
@@ -478,17 +510,37 @@ class _GameScreenState extends ConsumerState<GameScreen>
 
 class _PlayerStat extends StatelessWidget {
   final String name;
+  final String? avatarUrl;
   final int score;
   final bool isLeft;
-  const _PlayerStat({required this.name, required this.score, required this.isLeft});
+  
+  const _PlayerStat({
+    required this.name, 
+    this.avatarUrl, 
+    required this.score, 
+    required this.isLeft
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: isLeft ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      textDirection: isLeft ? TextDirection.ltr : TextDirection.rtl,
       children: [
-        Text(name, style: AppTextStyles.label),
-        Text('$score', style: AppTextStyles.headline.copyWith(color: AppColors.gold, fontSize: 20)),
+        SmartAvatar(
+          avatarUrl: avatarUrl,
+          size: 44,
+          showBorder: true,
+          showGlow: score > 50,
+        ),
+        const SizedBox(width: 12),
+        Column(
+          crossAxisAlignment: isLeft ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+          children: [
+            Text(name.toUpperCase(), style: AppTextStyles.label.copyWith(fontSize: 9, letterSpacing: 1)),
+            Text('$score', style: AppTextStyles.headline.copyWith(color: AppColors.gold, fontSize: 18, letterSpacing: 0)),
+          ],
+        ),
       ],
     );
   }

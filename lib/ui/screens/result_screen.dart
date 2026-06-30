@@ -23,6 +23,7 @@ import '../widgets/victory_card.dart';
 import '../widgets/xp_summary_card.dart';
 import '../widgets/rank_badge.dart';
 import '../widgets/rank_progress_bar.dart';
+import '../widgets/smart_avatar.dart';
 import 'home_screen.dart';
 import 'game_screen.dart';
 
@@ -109,6 +110,10 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
           ? (widget.room.player2?['score'] ?? 0)
           : widget.room.player1['score'];
           
+          final opponentAvatar = currentUser.uid == widget.room.player1['uid']
+          ? (widget.room.player2?['avatarUrl'])
+          : widget.room.player1['avatarUrl'];
+
       final opponentName = currentUser.uid == widget.room.player1['uid']
           ? (widget.room.player2?['username'] ?? 'Opponent')
           : widget.room.player1['username'];
@@ -116,6 +121,7 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
       final history = MatchModel(
         id: widget.room.roomId,
         opponentName: opponentName,
+        opponentAvatarUrl: opponentAvatar,
         playerScore: myScore,
         opponentScore: opponentScore,
         xpEarned: result?.xpRewards.total ?? 0,
@@ -333,11 +339,11 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Row(
                           children: [
-                            Text('$myScore', style: AppTextStyles.display.copyWith(color: AppColors.teal, fontSize: 26)),
+                            Text('$myScore', style: AppTextStyles.display.copyWith(color: AppColors.teal, fontSize: 26, letterSpacing: 0)),
                             const SizedBox(width: 8),
-                            Text('-', style: AppTextStyles.display.copyWith(color: AppColors.textMuted, fontSize: 18)),
+                            Text('-', style: AppTextStyles.display.copyWith(color: AppColors.textMuted, fontSize: 18, letterSpacing: 0)),
                             const SizedBox(width: 8),
-                            Text('$opponentScore', style: AppTextStyles.display.copyWith(color: AppColors.red, fontSize: 26)),
+                            Text('$opponentScore', style: AppTextStyles.display.copyWith(color: AppColors.red, fontSize: 26, letterSpacing: 0)),
                           ],
                         ),
                       ),
@@ -550,26 +556,14 @@ class _PlayerSummary extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Stack(
-          alignment: Alignment.center,
-          clipBehavior: Clip.none,
-          children: [
-            CircleAvatar(
-              radius: 35,
-              backgroundColor: isWinner ? AppColors.gold.withValues(alpha: 0.3) : AppColors.surface,
-              child: ClipOval(
-                child: avatarUrl != null && avatarUrl!.isNotEmpty
-                    ? CachedNetworkImage(imageUrl: avatarUrl!, width: 64, height: 64, fit: BoxFit.cover)
-                    : const Icon(Icons.person, color: AppColors.textMuted),
-              ),
-            ),
-            if (isWinner)
-              const Positioned(
-                top: -10,
-                child: Icon(Icons.workspace_premium_rounded, color: AppColors.gold, size: 20),
-              ),
-          ],
+        SmartAvatar(
+          avatarUrl: avatarUrl,
+          size: 70,
+          showGlow: isWinner,
+          showBorder: true,
         ),
+        if (isWinner)
+          const Icon(Icons.workspace_premium_rounded, color: AppColors.gold, size: 20),
         const SizedBox(height: 12),
         Text(username, style: AppTextStyles.headline.copyWith(fontSize: 14)),
         Text(rank, style: AppTextStyles.label.copyWith(color: AppColors.gold, fontSize: 10)),

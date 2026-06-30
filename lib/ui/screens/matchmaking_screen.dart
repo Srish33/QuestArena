@@ -9,7 +9,7 @@ import '../../core/constants/colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../providers/matchmaking_providers.dart';
 import '../../providers/user_providers.dart';
-import '../widgets/character_avatar.dart';
+import '../widgets/smart_avatar.dart';
 import 'lobby_screen.dart';
 
 class MatchmakingScreen extends ConsumerWidget {
@@ -100,18 +100,12 @@ class MatchmakingScreen extends ConsumerWidget {
 
                     // Player Avatar
                     if (user != null)
-                      Builder(builder: (context) {
-                        final character = kCharacters.firstWhere(
-                              (c) => c.id == (user.avatarUrl ?? ''),
-                          orElse: () => kCharacters.first,
-                        );
-                        return CharacterAvatar(
-                          character: character,
-                          size: 110,
-                          showGlow: true,
-                          showBorder: true,
-                        );
-                      }),
+                      SmartAvatar(
+                        avatarUrl: user.avatarUrl,
+                        size: 110,
+                        showGlow: true,
+                        showBorder: true,
+                      ),
                   ],
                 ),
                 

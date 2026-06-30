@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../constants/colors.dart';
 
 // ─── QuestArena Dark Arena Theme ───────────────────────────────────────────
@@ -8,24 +9,24 @@ class AppTheme {
   static ThemeData get darkArena => ThemeData(
     brightness: Brightness.dark,
     scaffoldBackgroundColor: AppColors.bgBase,
-    fontFamily: 'Rajdhani',
+    fontFamily: GoogleFonts.chakraPetch().fontFamily,
     colorScheme: const ColorScheme.dark(
       primary: AppColors.neonCyan,
       secondary: AppColors.neonViolet,
       surface: AppColors.bgCard,
       error: AppColors.neonPink,
     ),
-    appBarTheme: const AppBarTheme(
+    appBarTheme: AppBarTheme(
       backgroundColor: AppColors.bgBase,
       elevation: 0,
       centerTitle: false,
-      titleTextStyle: TextStyle(
+      titleTextStyle: GoogleFonts.orbitron(
         color: AppColors.textPrimary,
-        fontSize: 22,
+        fontSize: 20,
         fontWeight: FontWeight.w800,
-        letterSpacing: 3.0,
+        letterSpacing: 2.0,
       ),
-      iconTheme: IconThemeData(color: AppColors.neonCyan),
+      iconTheme: const IconThemeData(color: AppColors.neonCyan),
     ),
     navigationBarTheme: NavigationBarThemeData(
       backgroundColor: AppColors.bgCard,

@@ -7,7 +7,8 @@ import '../../../core/constants/text_styles.dart';
 import '../../../core/utils/rank_system.dart';
 import '../../../providers/leaderboard_providers.dart';
 import '../../../providers/user_providers.dart';
-import '../../../data/models/user_model.dart';
+import '../../../data/models/leaderboard_model.dart';
+import '../../widgets/smart_avatar.dart';
 
 class LeaderboardTab extends ConsumerWidget {
   const LeaderboardTab({super.key});
@@ -20,7 +21,16 @@ class LeaderboardTab extends ConsumerWidget {
 
     return leaderboardAsync.when(
       loading: () => const Center(child: CircularProgressIndicator(color: AppColors.gold)),
-      error: (e, s) => Center(child: Text('Error: $e')),
+      error: (e, s) => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Text(
+            'Failed to load leaderboard: $e',
+            style: AppTextStyles.bodyMd.copyWith(color: AppColors.red),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
       data: (players) {
         return CustomScrollView(
           slivers: [
@@ -61,19 +71,10 @@ class LeaderboardTab extends ConsumerWidget {
                       child: Row(
                         children: [
                           SizedBox(width: 40, child: _RankBadge(index: index)),
-                          CircleAvatar(
-                            radius: 20,
-                            backgroundColor: AppColors.surface,
-                            child: ClipOval(
-                              child: CachedNetworkImage(
-                                imageUrl: player.avatarUrl ?? '',
-                                width: 40,
-                                height: 40,
-                                fit: BoxFit.cover,
-                                placeholder: (context, url) => const CircularProgressIndicator(strokeWidth: 1),
-                                errorWidget: (context, url, error) => const Icon(Icons.person, size: 20),
-                              ),
-                            ),
+                          SmartAvatar(
+                            avatarUrl: player.avatarUrl,
+                            size: 40,
+                            showBorder: false,
                           ),
                           const SizedBox(width: 16),
                           Expanded(
@@ -118,7 +119,7 @@ class LeaderboardTab extends ConsumerWidget {
 }
 
 class _MvpCard extends StatelessWidget {
-  final UserModel player;
+  final LeaderboardModel player;
 
   const _MvpCard({required this.player});
 
@@ -144,27 +145,11 @@ class _MvpCard extends StatelessWidget {
           Stack(
             alignment: Alignment.center,
             children: [
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(color: AppColors.gold.withValues(alpha: 0.4), blurRadius: 20),
-                  ],
-                ),
-              ),
-              CircleAvatar(
-                radius: 35,
-                backgroundColor: AppColors.surface,
-                child: ClipOval(
-                  child: CachedNetworkImage(
-                    imageUrl: player.avatarUrl ?? '',
-                    width: 70,
-                    height: 70,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+              SmartAvatar(
+                avatarUrl: player.avatarUrl,
+                size: 80,
+                showGlow: true,
+                showBorder: true,
               ),
               const Positioned(
                 top: -5,
@@ -182,7 +167,7 @@ class _MvpCard extends StatelessWidget {
                 Text(player.username, style: AppTextStyles.display.copyWith(fontSize: 24)),
                 const SizedBox(height: 4),
                 Text(
-                  '${player.wins} WINS THIS WEEK', 
+                  '${player.totalWins} WINS THIS WEEK',
                   style: AppTextStyles.label.copyWith(color: AppColors.teal, fontWeight: FontWeight.bold),
                 ),
               ],

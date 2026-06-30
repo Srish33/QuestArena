@@ -5,6 +5,7 @@ enum MatchResult { win, loss, draw }
 class MatchModel {
   final String id;
   final String opponentName;
+  final String? opponentAvatarUrl;
   final int playerScore;
   final int opponentScore;
   final int xpEarned;
@@ -13,6 +14,7 @@ class MatchModel {
   MatchModel({
     required this.id,
     required this.opponentName,
+    this.opponentAvatarUrl,
     required this.playerScore,
     required this.opponentScore,
     required this.xpEarned,
@@ -45,6 +47,7 @@ class MatchModel {
     return MatchModel(
       id: json['matchId'] ?? json['id'] ?? '',
       opponentName: json['opponentName'] ?? 'Unknown',
+      opponentAvatarUrl: json['opponentAvatarUrl'],
       playerScore: json['myScore'] ?? json['playerScore'] ?? 0,
       opponentScore: json['opponentScore'] ?? 0,
       xpEarned: json['xpGained'] ?? json['xpEarned'] ?? 0,
@@ -55,6 +58,7 @@ class MatchModel {
   Map<String, dynamic> toJson() => {
     'id': id,
     'opponentName': opponentName,
+    'opponentAvatarUrl': opponentAvatarUrl,
     'playerScore': playerScore,
     'opponentScore': opponentScore,
     'xpEarned': xpEarned,

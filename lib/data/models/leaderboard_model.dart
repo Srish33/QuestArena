@@ -39,7 +39,6 @@ class LeaderboardModel {
       totalWins: json['totalWins'] ?? 0,
       currentStreak: json['currentStreak'] ?? 0,
       averageAccuracy: (json['averageAccuracy'] ?? 0).toDouble(),
-      rank: json['rank'] ?? 'Unranked',
       subRank: json['subRank'],
     );
   }

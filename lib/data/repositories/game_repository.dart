@@ -16,7 +16,13 @@ class GameRepository {
 
   Future<List<Map<String, dynamic>>> fetchQuestions(int amount) async {
     try {
-      final response = await _dio.get("${ApiConstants.triviaBaseUrl}?amount=$amount&type=multiple");
+      final response = await _dio.get(
+        ApiConstants.triviaBaseUrl,
+        queryParameters: {
+          'amount': amount,
+          'type': 'multiple',
+        },
+      );
       if (response.statusCode == 200 && response.data['results'] != null) {
         return (response.data['results'] as List).map((q) => {
           'question': GameUtils.decodeHtmlEntities(q['question']),
@@ -28,7 +34,7 @@ class GameRepository {
       }
       throw Exception("Invalid response from trivia API");
     } catch (e) {
-      print("Trivia API Error: $e - Falling back to local questions");
+      // Trivia API Error - Falling back to local questions
       final allFallbacks = GameUtils.getFallbackQuestions();
       // Ensure we only return 10 or whatever the requested amount is
       return allFallbacks.take(amount).toList();
@@ -54,7 +60,6 @@ class GameRepository {
             .toList(),
       }).toList();
     } catch (e) {
-      print("Trivia API Error: $e");
       questions = GameUtils.getFallbackQuestions();
     }
 
@@ -216,7 +221,13 @@ class GameRepository {
   // --- ARENA BREAKER LOGIC ---
   Future<void> _fetchArenaBreakerQuestion(String roomId) async {
     try {
-      final response = await _dio.get(ApiConstants.triviaUrl, queryParameters: {'amount': 1});
+      final response = await _dio.get(
+        ApiConstants.triviaBaseUrl,
+        queryParameters: {
+          'amount': 1,
+          'type': 'multiple',
+        },
+      );
       final q = (response.data['results'] as List).first;
       final questionMap = {
         'question': GameUtils.decodeHtmlEntities(q['question']),
@@ -272,9 +283,11 @@ class GameRepository {
         final s2 = submissions[p2['uid']];
 
         String? winnerId;
-        if (s1 != null && s1['isCorrect'] && (s2 == null || !s2['isCorrect'])) winnerId = p1['uid'];
-        else if (s2 != null && s2['isCorrect'] && (s1 == null || !s1['isCorrect'])) winnerId = p2['uid'];
-        else if (s1 != null && s2 != null && s1['isCorrect'] && s2['isCorrect']) {
+        if (s1 != null && s1['isCorrect'] && (s2 == null || !s2['isCorrect'])) {
+          winnerId = p1['uid'];
+        } else if (s2 != null && s2['isCorrect'] && (s1 == null || !s1['isCorrect'])) {
+          winnerId = p2['uid'];
+        } else if (s1 != null && s2 != null && s1['isCorrect'] && s2['isCorrect']) {
           winnerId = (s1['timestamp'] < s2['timestamp']) ? p1['uid'] : p2['uid'];
         } else if (submissions.length == 2) {
           // Both wrong -> Next round
@@ -351,15 +364,14 @@ class GameRepository {
     await _db.runTransaction((transaction) async {
       final snapshot = await transaction.get(roomRef);
       if (!snapshot.exists) return;
-      final claimed = List<String>.from(snapshot.get('claimedRewards') ?? []);
-      if (claimed.contains(userId)) return;
+      
+      final data = snapshot.data();
+      final claimedList = List<String>.from(data?['claimedRewards'] ?? []);
+      
+      if (claimedList.contains(userId)) return; // Already claimed
 
-      final data = snapshot.data() as Map<String, dynamic>?;
-      final claimed = List<String>.from(data?['claimedRewards'] ?? []);
-      if (claimed.contains(userId)) return; // Already claimed
-
-      claimed.add(userId);
-      transaction.update(roomRef, {'claimedRewards': claimed});
+      claimedList.add(userId);
+      transaction.update(roomRef, {'claimedRewards': claimedList});
     });
   }
 

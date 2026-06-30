@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../../core/constants/colors.dart';
 import '../../core/constants/text_styles.dart';
+import 'smart_avatar.dart';
 
 class VictoryCard extends StatelessWidget {
   final String username;
@@ -145,28 +145,11 @@ class VictoryCard extends StatelessWidget {
                     ),
                   ),
                   // Avatar
-                  Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [AppColors.gold, AppColors.purple],
-                      ),
-                    ),
-                    child: CircleAvatar(
-                      radius: 45,
-                      backgroundColor: AppColors.surface,
-                      child: ClipOval(
-                        child: avatarUrl != null && avatarUrl!.isNotEmpty
-                            ? CachedNetworkImage(
-                                imageUrl: avatarUrl!,
-                                width: 90,
-                                height: 90,
-                                fit: BoxFit.cover,
-                              )
-                            : const Icon(Icons.person, size: 50, color: AppColors.textSecondary),
-                      ),
-                    ),
+                  SmartAvatar(
+                    avatarUrl: avatarUrl,
+                    size: 90,
+                    showGlow: true,
+                    showBorder: true,
                   ),
                   // Crown
                   Positioned(
@@ -313,12 +296,10 @@ class VictoryCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 20,
-            backgroundColor: AppColors.gold.withValues(alpha: 0.2),
-            child: avatarUrl != null && avatarUrl!.isNotEmpty
-                ? ClipOval(child: CachedNetworkImage(imageUrl: avatarUrl!, width: 40, height: 40, fit: BoxFit.cover))
-                : const Icon(Icons.person, size: 20, color: AppColors.textSecondary),
+          SmartAvatar(
+            avatarUrl: avatarUrl,
+            size: 40,
+            showBorder: false,
           ),
           const SizedBox(width: 12),
           Expanded(

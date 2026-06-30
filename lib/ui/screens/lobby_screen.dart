@@ -5,7 +5,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/constants/colors.dart';
 import '../../providers/game_providers.dart';
 import '../../providers/user_providers.dart';
-import '../widgets/character_avatar.dart';
+import '../../core/constants/text_styles.dart';
+import '../widgets/smart_avatar.dart';
 import 'game_screen.dart';
 
 class LobbyScreen extends ConsumerStatefulWidget {
@@ -74,16 +75,6 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
             _startCountdown();
           }
 
-          final char1 = kCharacters.firstWhere(
-                (c) => c.id == (p1['avatarUrl'] ?? ''),
-            orElse: () => kCharacters.first,
-          );
-
-          final char2 = p2 != null ? kCharacters.firstWhere(
-                (c) => c.id == (p2['avatarUrl'] ?? ''),
-            orElse: () => kCharacters.first,
-          ) : null;
-
           return Stack(
             children: [
               Column(
@@ -95,14 +86,14 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          CharacterAvatar(
-                            character: char1,
+                          SmartAvatar(
+                            avatarUrl: p1['avatarUrl'],
                             size: 120,
                             showGlow: true,
                             showBorder: true,
                           ),
                           const SizedBox(height: 16),
-                          Text(p1['username'], style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.textPrimary, letterSpacing: 1)),
+                          Text(p1['username'], style: AppTextStyles.headline.copyWith(color: AppColors.textPrimary)),
                           _ReadyBadge(isReady: p1['isReady'] ?? false, color: AppColors.neonViolet),
                         ],
                       ),
@@ -119,10 +110,10 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
                             children: [
                               const CircularProgressIndicator(color: AppColors.neonAmber, strokeWidth: 2),
                               const SizedBox(height: 24),
-                              const Text('WAITING FOR OPPONENT', style: TextStyle(color: AppColors.textMuted, fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 2)),
+                              Text('WAITING FOR OPPONENT', style: AppTextStyles.label.copyWith(letterSpacing: 2)),
                               const SizedBox(height: 8),
-                              const Text('ROOM CODE:', style: TextStyle(color: AppColors.textMuted, fontSize: 10, letterSpacing: 1)),
-                              Text(room.roomCode, style: const TextStyle(color: AppColors.neonAmber, fontSize: 32, fontWeight: FontWeight.w900, letterSpacing: 4)),
+                              Text('ROOM CODE:', style: AppTextStyles.label.copyWith(fontSize: 10, letterSpacing: 1)),
+                              Text(room.roomCode, style: AppTextStyles.display.copyWith(color: AppColors.neonAmber, fontSize: 32, letterSpacing: 4)),
                             ],
                           )
                         : Column(
@@ -130,10 +121,10 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
                             children: [
                               _ReadyBadge(isReady: p2['isReady'] ?? false, color: AppColors.neonAmber),
                               const SizedBox(height: 16),
-                              Text(p2['username'], style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.textPrimary, letterSpacing: 1)),
+                              Text(p2['username'], style: AppTextStyles.headline.copyWith(color: AppColors.textPrimary)),
                               const SizedBox(height: 16),
-                              CharacterAvatar(
-                                character: char2!,
+                              SmartAvatar(
+                                avatarUrl: p2['avatarUrl'],
                                 size: 120,
                                 showGlow: true,
                                 showBorder: true,
@@ -149,7 +140,7 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(20),
                   decoration: const BoxDecoration(color: AppColors.bgDeep, shape: BoxShape.circle),
-                  child: const Text('VS', style: TextStyle(color: AppColors.neonAmber, fontSize: 24, fontWeight: FontWeight.w900, letterSpacing: 2)),
+                  child: Text('VS', style: AppTextStyles.display.copyWith(color: AppColors.neonAmber, fontSize: 24)),
                 ).animate().scale(delay: 400.ms, curve: Curves.elasticOut),
               ),
 
@@ -157,7 +148,7 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
                 Container(
                   color: Colors.black87,
                   child: Center(
-                    child: Text('$_countdown', style: const TextStyle(fontSize: 120, fontWeight: FontWeight.w900, color: AppColors.neonCyan))
+                    child: Text('$_countdown', style: AppTextStyles.display.copyWith(fontSize: 120, color: AppColors.neonCyan))
                         .animate(key: ValueKey(_countdown))
                         .scale(duration: 500.ms)
                         .fadeOut(delay: 500.ms),
@@ -185,7 +176,7 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: const Text('I AM READY!', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 2)),
+                    child: Text('I AM READY!', style: AppTextStyles.bodyLg.copyWith(fontWeight: FontWeight.w900, letterSpacing: 2, color: Colors.white)),
                   ),
                 ),
             ],

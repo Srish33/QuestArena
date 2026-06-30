@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/constants/colors.dart';
 import '../../../core/constants/text_styles.dart';
 import '../../../core/utils/rank_system.dart';
 import '../../../providers/user_providers.dart';
 import '../../../providers/auth_providers.dart';
 import '../../../providers/leaderboard_providers.dart';
-import '../../../data/models/user_model.dart';
 import '../../widgets/character_avatar.dart';
-import '../../widgets/rank_badge.dart';
 import '../../widgets/xp_progress_bar.dart';
 import '../../widgets/rank_progress_bar.dart';
 import '../../widgets/neon_swirl_background.dart';
+import '../../widgets/smart_avatar.dart';
 import '../character_select_screen.dart';
-import 'edit_profile_screen.dart';
 
 class ProfileTab extends ConsumerStatefulWidget {
   const ProfileTab({super.key});
@@ -147,23 +143,11 @@ class _ProfileTabState extends ConsumerState<ProfileTab> with SingleTickerProvid
                       // Header
                       Stack(
                         children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: RankSystem.getRankColor(user.rank).withValues(alpha: 0.35),
-                                  blurRadius: 16,
-                                  spreadRadius: 2,
-                                ),
-                              ],
-                            ),
-                            child: CharacterAvatar(
-                              character: character,
-                              size: 100,
-                              showGlow: true,
-                              showBorder: true,
-                            ),
+                          SmartAvatar(
+                            avatarUrl: user.avatarUrl,
+                            size: 100,
+                            showGlow: true,
+                            showBorder: true,
                           ),
                           Positioned(
                             right: 0,
